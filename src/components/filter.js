@@ -10,7 +10,7 @@ function Filter() {
   };
   return (
     <div>
-      <input onChange={handleChange} />
+      filter <input onChange={handleChange} />
     </div>
   );
 }
