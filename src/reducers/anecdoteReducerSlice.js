@@ -31,9 +31,9 @@ const anecdoteslice = createSlice({
     },
     voteUpdate(state, action) {
       const updatedBlog = action.payload;
+      //...............below code to update from front end...
       // const voteChange = state.find((s) => s.id === updatedBlog.id);
       // const changedVote = { ...voteChange, votes: updatedBlog.votes };
-
       return state.map((anecdote) =>
         anecdote.id !== updatedBlog.id ? anecdote : updatedBlog
       );
@@ -67,6 +67,7 @@ export const createNewAnecdote = (content) => {
 export const updateVote = (id, data) => {
   return async (dispatch) => {
     const result = await anecdoteService.update(id, data);
+    console.log(result);
     dispatch(voteUpdate(result));
   };
 };
