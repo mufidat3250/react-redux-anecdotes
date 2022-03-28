@@ -1,31 +1,29 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { voteUpdate } from "../reducers/anecdoteReducerSlice";
 import { setNotification } from "../reducers/notificationSlice";
 import { useEffect } from "react";
-import anecdoteService from "../services/anecdotes";
-import { newAnecdote, setAnecdote } from "../reducers/anecdoteReducerSlice";
+import {
+  initializeAnecdote,
+  updateVote,
+} from "../reducers/anecdoteReducerSlice";
 
 function AnecdoteList() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    anecdoteService.getAll().then((res) => dispatch(setAnecdote(res)));
+    dispatch(initializeAnecdote());
   }, [dispatch]);
 
-  // const anecdotes = useSelector(({ anecdote, filter }) => {
-  //   console.log(anecdote);
-  //   return anecdote.filter((anec) =>
-  //     anec.content.toLowerCase().includes(filter.toLowerCase())
-  //   );
-  // });
+  const anecdotes = useSelector(({ anecdote, filter }) => {
+    return anecdote.filter((anec) =>
+      anec.content.toLowerCase().includes(filter.toLowerCase())
+    );
+  });
 
-  const anecdotes = useSelector(({ anecdote }) => anecdote);
   console.log(anecdotes);
-
-  const vote = (id, content) => {
-    dispatch(voteUpdate(id));
-    dispatch(setNotification(`you votted:   ${content}`));
+  const vote = (id, data) => {
+    dispatch(updateVote(id, data));
+    dispatch(setNotification(`you votted:   ${data.content}`));
     setTimeout(() => {
       dispatch(setNotification(``));
     }, 5000);
@@ -40,9 +38,7 @@ function AnecdoteList() {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id, anecdote.content)}>
-              vote
-            </button>
+            <button onClick={() => vote(anecdote.id, anecdote)}>vote</button>
           </div>
         </div>
       ))}

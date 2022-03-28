@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { setNotification } from "../reducers/notificationSlice";
 import { newAnecdote } from "../reducers/anecdoteReducerSlice";
 import anecdoteService from "../services/anecdotes";
+import { createNewAnecdote } from "../reducers/anecdoteReducerSlice";
 
 function AnecdoteForm() {
   const dispatch = useDispatch();
@@ -12,9 +13,8 @@ function AnecdoteForm() {
     const content = e.target.vote.value;
     e.target.vote.value = "";
     console.log(newAnecdote(content));
-    const newAnc = await anecdoteService.createNew(content);
-    console.log(newAnc);
-    dispatch(newAnecdote(newAnc));
+
+    dispatch(createNewAnecdote(content));
     dispatch(setNotification(`you created ${content}`));
     setTimeout(() => {
       dispatch(setNotification(``));
