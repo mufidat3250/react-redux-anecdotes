@@ -1,12 +1,10 @@
 import React from "react";
 
-import { useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { setfilter } from "../reducers/filterSlice";
-function Filter() {
-  const dispatch = useDispatch();
-
+function Filter(props) {
   const handleChange = (e) => {
-    dispatch(setfilter(e.target.value));
+    props.setfilter(e.target.value);
   };
   return (
     <div>
@@ -15,4 +13,13 @@ function Filter() {
   );
 }
 
-export default Filter;
+const mapDispatchToprops = (dispatch) => {
+  return {
+    setfilter: (value) => {
+      dispatch(setfilter(value));
+    },
+  };
+};
+
+const connectFilter = connect(null, mapDispatchToprops)(Filter);
+export default connectFilter;

@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, connect } from "react-redux";
 import { setNotification } from "../reducers/notificationSlice";
 import { useEffect } from "react";
 import {
@@ -7,29 +7,35 @@ import {
   updateVote,
 } from "../reducers/anecdoteReducerSlice";
 
-function AnecdoteList() {
-  const dispatch = useDispatch();
+function AnecdoteList(props) {
+  const { anecdote, filter, setNotification } = props;
 
   useEffect(() => {
-    dispatch(initializeAnecdote());
-  }, [dispatch]);
+    props.initializeAnecdote();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const anecdotes = useSelector(({ anecdote, filter }) => {
-    return anecdote.filter((anec) =>
-      anec.content.toLowerCase().includes(filter.toLowerCase())
-    );
-  });
+  const FilteredAnecdote = anecdote.filter((anec) =>
+    anec.content.toLowerCase().includes(filter.toLowerCase())
+  );
+  console.log(FilteredAnecdote);
 
-  console.log(anecdotes);
+  // const anecdotes = useSelector(({ anecdote, filter }) => {
+  //   return anecdote.filter((anec) =>
+  //     anec.content.toLowerCase().includes(filter.toLowerCase())
+  //   );
+  // });
+
   const vote = (id, data) => {
-    dispatch(updateVote(id, data));
-    dispatch(setNotification(`you votted:   ${data.content}`));
+    props.updateVote(id, data);
+    setNotification(`you votted:   ${data.content}`);
     setTimeout(() => {
-      dispatch(setNotification(``));
+      setNotification(``);
     }, 5000);
   };
 
-  const sortedAnecdote = anecdotes.slice().sort((a, b) => b.votes - a.votes);
+  const sortedAnecdote = FilteredAnecdote.slice().sort(
+    (a, b) => b.votes - a.votes
+  );
 
   return (
     <>
@@ -46,4 +52,26 @@ function AnecdoteList() {
   );
 }
 
-export default AnecdoteList;
+const mapStateToprops = (state) => {
+  return state;
+};
+
+const mapDispatchToprops = (dispatch) => {
+  return {
+    setNotification: (value) => {
+      dispatch(setNotification(value));
+    },
+    updateVote: (id, data) => {
+      dispatch(updateVote(id, data));
+    },
+    initializeAnecdote: () => {
+      dispatch(initializeAnecdote());
+    },
+  };
+};
+
+const connectAnecdoteList = connect(
+  mapStateToprops,
+  mapDispatchToprops
+)(AnecdoteList);
+export default connectAnecdoteList;
